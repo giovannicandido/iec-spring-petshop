@@ -10,6 +10,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.example.petshop.service.exceptions.DataIntegrityException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class ServicoService {
@@ -21,17 +24,20 @@ public class ServicoService {
 		Optional<Servico> obj = repo.findById(id);
 		return obj.orElseThrow( () -> new ObjetoNaoEncontradoException( "Objeto não encontrado. ID: " + id + ", Tipo: " + Servico.class.getName()));
 	}
-	
+
+	@Transactional
 	public Servico insert(Servico obj) {
 		obj.setId(null);
 		return repo.save(obj);
 	}
-	
+
+	@Transactional
 	public Servico update(Servico obj) {
 		find(obj.getId());
 		return repo.save(obj);
 	}	
-	
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void delete(Integer id) {
 		find(id);		
 		try {

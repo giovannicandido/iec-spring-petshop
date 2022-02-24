@@ -11,12 +11,18 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.example.petshop.service.exceptions.DataIntegrityException;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Service
 public class PessoaService {
 	
 	@Autowired
 	private PessoaRepository repo;
+
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 	
 	public Pessoa find(Integer id) {
 		Optional<Pessoa> obj = repo.findById(id);
@@ -25,7 +31,18 @@ public class PessoaService {
 	
 	public Pessoa insert(Pessoa obj) {
 		obj.setId(null);
-		return repo.save(obj);
+		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+		definition.setTimeout(30);
+		TransactionStatus status = transactionManager.getTransaction(definition);
+		try {
+
+			Pessoa retorno = repo.save(obj);
+			transactionManager.commit(status);
+			return retorno;
+		} catch (Exception ex) {
+			transactionManager.rollback(status);
+			return null;
+		}
 	}
 	
 	public Pessoa update(Pessoa obj) {
