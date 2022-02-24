@@ -36,6 +36,8 @@ import com.example.petshop.repository.ProdutoRepository;
 import com.example.petshop.repository.RacaRepository;
 import com.example.petshop.repository.ServicoRepository;
 
+import javax.annotation.PostConstruct;
+
 @Component
 public class PopulaDados {
 	
@@ -73,7 +75,7 @@ public class PopulaDados {
 	PagamentoRepository pagamentoRepository;
 	
 	
-	//@PostConstruct
+//	@PostConstruct
 	public void cadastrar() throws ParseException {
 		
 		Categoria cat1 = new Categoria(null, "Alimento");
@@ -127,8 +129,10 @@ public class PopulaDados {
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
 		
 		Cliente clt1 = new Cliente(null, "Jose Maria", "jose@mail.com", "335.194.320-21", "FISICA");
+		Cliente clt2 = new Cliente(null, "Antonia Silva", "antonia@mail.com", "335.194.320-21", "FISICA");
 		clt1.getTelefones().addAll(Arrays.asList("3516-2000","9191-0000"));
-		
+		clt2.getTelefones().addAll(Arrays.asList("3516-2000","9191-0000"));
+
 		Funcionario fnc1 = new Funcionario(null, "Maria Jose", "maria@mail.com", "551.872.200.12", "ATENDENTE");
 		fnc1.getTelefones().addAll(Arrays.asList("3279-0001","9090-0002"));
 		
@@ -136,16 +140,18 @@ public class PopulaDados {
 		Endereco end1 = new Endereco(null, "Rua Tupis", "500", "Apto 101", "Pindorama", "30111222", clt1, c1);
 		Endereco end2 = new Endereco(null, "Av. Tamoios", "100", "Casa", "Oca", "3968000", fnc1, c2);
 		Endereco end3 = new Endereco(null, "Rua Aranãs", "10", "Apto 201", "Centro", "01153000", fnc1, c3);
-		
-		pessoaRepository.saveAll(Arrays.asList(clt1, fnc1));
-		enderecoRepository.saveAll(Arrays.asList(end1, end2, end3));
+		Endereco end4 = new Endereco(null, "Rua Bahia", "200", "Apto 101", "Centro", "30111222", clt2, c1);
+
+		pessoaRepository.saveAll(Arrays.asList(clt1, clt2, fnc1));
+		enderecoRepository.saveAll(Arrays.asList(end1, end2, end3, end4));
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
 		Servico srv1 = new Servico(null, sdf.parse("02/09/2021 09:00"), sdf.parse("02/09/2021 12:00"), "Tosa", clt1, fnc1, pet1);
 		Servico srv2 = new Servico(null, sdf.parse("03/09/2021 12:00"), sdf.parse("04/09/2021 12:00"), "Hotel", clt1, fnc1, pet2);
 		Servico srv3 = new Servico(null, sdf.parse("05/09/2021 16:00"), sdf.parse("05/09/2021 16:30"), "Vermifugação", clt1, fnc1, pet3);
-		
+		Servico srv4 = new Servico(null, sdf.parse("06/09/2021 10:00"), sdf.parse("06/09/2021 10:30"), "Vermifugação", clt2, fnc1, pet3);
+
 		Pagamento pgt1 = new PagCartao(null, 60.00, SituacaoPagamento.QUITADO,srv2, 6);
 		srv2.setPagamento(pgt1);
 		
@@ -156,12 +162,12 @@ public class PopulaDados {
 		srv3.setPagamento(pgt3);
 		
 		clt1.getServicos().addAll(Arrays.asList(srv1, srv2));
-		fnc1.getServicos().addAll(Arrays.asList(srv1, srv2));
+		fnc1.getServicos().addAll(Arrays.asList(srv1, srv2, srv4));
 		
 		srv2.getProdutos().addAll(Arrays.asList(p1, p2, p4));
 		srv3.getProdutos().addAll(Arrays.asList(p3));
 		
-		servicoRepository.saveAll(Arrays.asList(srv1, srv2, srv3));
+		servicoRepository.saveAll(Arrays.asList(srv1, srv2, srv3, srv4));
 		pagamentoRepository.saveAll(Arrays.asList(pgt1, pgt2, pgt3));
 		
 	}
